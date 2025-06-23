@@ -8,7 +8,7 @@ echo "This script will install system packages and Python libraries."
 # --- Step 1: Install System Dependencies ---
 echo ""
 echo "[Step 1/4] Installing system dependencies (yad, maim, python3-venv)..."
-sudo apt-get update && sudo apt-get install -y yad maim python3-venv dbus-x11
+sudo apt-get update && sudo apt-get install -y yad maim xclip python3-venv dbus-x11
 if [ $? -ne 0 ]; then
     echo "Error: Failed to install system packages. Please check your internet connection and permissions."
     exit 1
