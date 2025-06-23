@@ -23,13 +23,16 @@ if [ $? -ne 0 ]; then
     echo "Error: Failed to create Python virtual environment."
     exit 1
 fi
+# Make sure pip is installed and up-to-date in the virtual environment
+./.venv/bin/python -m ensurepip --upgrade
+./.venv/bin/python -m pip install --upgrade pip
 echo "Virtual environment created."
 
 # --- Step 3: Install Python Packages ---
 echo ""
 echo "[Step 3/4] Installing Python packages (google-generativeai, pillow, python-dotenv)..."
-# Use the pip from the virtual environment
-./.venv/bin/pip install google-generativeai pillow python-dotenv
+# Use python -m pip instead of calling pip directly
+./.venv/bin/python -m pip install google-generativeai pillow python-dotenv
 if [ $? -ne 0 ]; then
     echo "Error: Failed to install Python packages."
     exit 1
