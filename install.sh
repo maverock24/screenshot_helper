@@ -7,8 +7,8 @@ echo "This script will install system packages and Python libraries."
 
 # --- Step 1: Install System Dependencies ---
 echo ""
-echo "[Step 1/4] Installing system dependencies (yad, maim, python3-venv)..."
-sudo apt-get update && sudo apt-get install -y yad maim xclip python3-venv dbus-x11
+echo "[Step 1/4] Installing system dependencies (yad, maim, python3-venv, ffmpeg, pulseaudio-utils, python3-tk)..."
+sudo apt-get update && sudo apt-get install -y yad maim xclip python3-venv dbus-x11 ffmpeg pulseaudio-utils python3-tk
 if [ $? -ne 0 ]; then
     echo "Error: Failed to install system packages. Please check your internet connection and permissions."
     exit 1
@@ -30,9 +30,9 @@ echo "Virtual environment created."
 
 # --- Step 3: Install Python Packages ---
 echo ""
-echo "[Step 3/4] Installing Python packages (google-generativeai, pillow, python-dotenv)..."
+echo "[Step 3/4] Installing Python packages (google-generativeai, pillow, python-dotenv, markdown, pygments)..."
 # Use python -m pip instead of calling pip directly
-./.venv/bin/python -m pip install google-generativeai pillow python-dotenv
+./.venv/bin/python -m pip install google-generativeai pillow python-dotenv markdown pygments
 if [ $? -ne 0 ]; then
     echo "Error: Failed to install Python packages."
     exit 1
@@ -42,12 +42,19 @@ echo "Python packages installed successfully."
 # --- Step 4: Configure API Key ---
 echo ""
 echo "[Step 4/4] Configuring Google AI API Key..."
-# Prompt the user for their API key
-read -p "Please enter your Google AI API Key: " API_KEY
 
-# Create the .env file
-echo "GOOGLE_API_KEY=\"$API_KEY\"" > .env
-echo ".env file created successfully."
+# Check if .env file already exists and contains GOOGLE_API_KEY
+if [ -f ".env" ] && grep -q "GOOGLE_API_KEY=" .env; then
+    echo "Google AI API Key already configured in .env file."
+    echo "Skipping API key configuration."
+else
+    # Prompt the user for their API key
+    read -p "Please enter your Google AI API Key: " API_KEY
+    
+    # Create the .env file
+    echo "GOOGLE_API_KEY=\"$API_KEY\"" > .env
+    echo ".env file created successfully."
+fi
 
 # --- Finished ---
 echo ""
