@@ -12,6 +12,8 @@ import google.generativeai as genai
 from PIL import Image
 import markdown
 from pygments.formatters import HtmlFormatter
+import tkinter as tk
+from tkinter import messagebox
 
 # --- USER CONFIGURATION ---
 # (No longer need window size percentages)
@@ -125,9 +127,69 @@ def get_ai_explanation():
         if SCREENSHOT_PATH.exists():
             os.remove(SCREENSHOT_PATH)
 
+def launch_gui():
+    root = tk.Tk()
+    root.title("Screenshot Helper")
+    root.geometry("450x440")
+    root.resizable(False, False)
+    root.configure(bg="#f5f5f5")
+    root.attributes('-topmost', True)
+
+    title_label = tk.Label(root, text="AI Screenshot Helper", font=("Segoe UI", 16, "bold"), bg="#f5f5f5", fg="#222")
+    title_label.pack(pady=(18, 8), fill=tk.X)
+
+    desc_label = tk.Label(
+        root,
+        text="Take a screenshot and get an AI explanation or solution.",
+        font=("Segoe UI", 11),
+        bg="#f5f5f5",
+        fg="#444"
+    )
+    desc_label.pack(pady=(0, 18), fill=tk.X)
+
+    status_var = tk.StringVar()
+    status_var.set("")
+    status_label = tk.Label(root, textvariable=status_var, font=("Segoe UI", 11, "italic"), bg="#f5f5f5", fg="#666")
+    status_label.pack(pady=(0, 10), fill=tk.X)
+
+    def on_capture():
+        status_var.set("Processing...")
+        root.update_idletasks()
+        root.attributes('-topmost', True)
+        root.after(100, do_capture)
+
+    def do_capture():
+        if take_screenshot():
+            explanation = get_ai_explanation()
+            if explanation:
+                html_output = format_as_html(explanation)
+                create_and_show_html(html_output)
+                status_var.set("Done! Result opened in browser.")
+            else:
+                status_var.set("")
+                messagebox.showerror("Error", "AI explanation failed.")
+        else:
+            status_var.set("")
+            messagebox.showerror("Error", "Screenshot failed.")
+        root.attributes('-topmost', True)
+
+    capture_btn = tk.Button(
+        root, text="Capture", command=on_capture,
+        font=("Segoe UI", 12, "bold"), bg="#4f8cff", fg="white",
+        activebackground="#357ae8", activeforeground="white",
+        relief=tk.FLAT, bd=0, width=20, height=2
+    )
+    capture_btn.pack(pady=(0, 10))
+
+    close_btn = tk.Button(
+        root, text="Close", command=root.destroy,
+        font=("Segoe UI", 11), bg="#e0e0e0", fg="#333",
+        activebackground="#cccccc", activeforeground="#222",
+        relief=tk.FLAT, bd=0, width=20, height=1
+    )
+    close_btn.pack(pady=(0, 10))
+
+    root.mainloop()
+
 if __name__ == "__main__":
-    if take_screenshot():
-        explanation = get_ai_explanation()
-        if explanation:
-            html_output = format_as_html(explanation)
-            create_and_show_html(html_output)
+    launch_gui()

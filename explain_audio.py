@@ -25,8 +25,11 @@ class AudioRecorderGUI:
     def __init__(self):
         self.root = tk.Tk()
         self.root.title("AI Audio Helper")
-        self.root.geometry("300x150")
+        self.root.geometry("400x200")
         self.root.resizable(False, False)
+
+        #Make sure the window is always on top
+        self.root.attributes("-topmost", True)
         
         # Center the window
         self.root.eval('tk::PlaceWindow . center')
